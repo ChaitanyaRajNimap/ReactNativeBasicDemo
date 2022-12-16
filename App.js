@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  ScrollView,
+  FlatList,
+} from "react-native";
 
 export default function App() {
   const [enteredGoal, setEnteredGoal] = useState("");
@@ -10,7 +18,10 @@ export default function App() {
   }
 
   function addGoalHandler() {
-    setCourseGoals([...courseGoals, enteredGoal]);
+    setCourseGoals([
+      ...courseGoals,
+      { text: enteredGoal, id: Math.random().toString() },
+    ]);
   }
 
   return (
@@ -19,15 +30,32 @@ export default function App() {
         <TextInput
           style={styles.textInput}
           placeholder="Your course goal!"
-          // onChange={goalInputHandler}
+          // onChange={(newText) => goalInputHandler(newText)}
           onChangeText={(newText) => goalInputHandler(newText)}
         />
         <Button title="Add Goal" onPress={addGoalHandler} />
       </View>
       <View style={styles.goalsContainer}>
-        {courseGoals.map((goal) => (
-          <Text key={goal}>{goal}</Text>
-        ))}
+        {/* <ScrollView>
+          {courseGoals.map((goal) => (
+            <View key={goal} style={styles.goalStyle}>
+              <Text style={styles.goalText}>{goal}</Text>
+            </View>
+          ))}
+        </ScrollView> */}
+        <FlatList
+          data={courseGoals}
+          renderItem={(itemData) => {
+            return (
+              <View style={styles.goalStyle}>
+                <Text style={styles.goalText}>{itemData.item.text}</Text>
+              </View>
+            );
+          }}
+          keyExtractor={(item, index) => {
+            return item.id;
+          }}
+        />
       </View>
     </View>
   );
@@ -35,27 +63,40 @@ export default function App() {
 
 const styles = StyleSheet.create({
   appContainer: {
-    flex: 1,
-    paddingTop: 50,
+    paddingTop: 20,
     paddingHorizontal: 16,
+    flex: 1,
   },
   inputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    marginBottom: 24,
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   textInput: {
+    width: "70%",
+    padding: 5,
     borderWidth: 1,
     borderColor: "#ccc",
-    width: "70%",
     marginRight: 10,
-    padding: 5,
   },
   goalsContainer: {
     flex: 5,
+  },
+  goalStyle: {
+    padding: 10,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: "#5e0acc",
+    borderRadius: 7,
+    backgroundColor: "#5e0acc",
+  },
+  goalText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
